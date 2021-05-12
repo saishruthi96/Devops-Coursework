@@ -1,5 +1,0 @@
-- name: fetch war file
-  fetch: 
-    src: "/var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war"
-    dest: /bakerx/cm/roles/create_jobs/templates/iTrust2.war
-    flat: yes  

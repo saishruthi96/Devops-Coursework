@@ -1,4 +1,0 @@
-- name: Copy the server file to home/vagrant
-  copy:
-    src: "/bakerx/cm/roles/cloud_roles/templates/servers.json"
-    dest:  "/home/vagrant"

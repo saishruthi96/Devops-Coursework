@@ -1,5 +1,0 @@
-- hosts: proxy
-  gather_facts: false
-  become: yes
-  roles:
-    - fetch_json
