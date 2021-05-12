@@ -1,0 +1,72 @@
+- job:
+    name: iTrust
+    project-type: pipeline
+    scm:
+      - ncsu-github
+    dsl: |
+      node {            
+      stage('Source'){
+        git branch: 'main', credentialsId: 'GIT_CREDENTIALS', url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8.git'
+      }
+      stage('Build'){         
+        sh '''          
+        set work_path = $PWD
+        cd iTrust2/src/main/resources/
+        cp /home/vagrant/application.yml .
+        cd /
+        cd $work_path
+        sh '''
+      }
+      stage('Test'){
+        sh '''
+        cd iTrust2/
+        mvn clean test integration-test checkstyle:checkstyle 
+        sh ''' 
+      }
+      stage('Post-Build'){
+      catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE')
+      {
+      recordIssues( enabledForFailure: true, healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH', tool: checkStyle(pattern: '**/checkstyle-result.xml'),
+                  qualityGates: [ [threshold: 100, type: 'TOTAL', unstable: false] ]
+              )
+          jacoco(
+          execPattern: '**/target/coverage-reports/jacoco-ut.exec',
+          runAlways: true,
+          classPattern: '**/classes',
+          sourcePattern: '**/src/main/java',
+          changeBuildStatus: true,
+          minimumClassCoverage: '10' ,
+          maximumClassCoverage: '80',
+          minimumMethodCoverage: '10',
+          maximumMethodCoverage: '80',
+          minimumLineCoverage: '10',
+          maximumLineCoverage: '80',
+          minimumInstructionCoverage: '10',
+          maximumInstructionCoverage: '80',
+          minimumBranchCoverage: '10',
+          maximumBranchCoverage: '80',
+          minimumComplexityCoverage: '10',
+          maximumComplexityCoverage: '80'
+        )
+        publishCoverage adapters: [jacocoAdapter(path: '**/target/site/jacoco-ut/jacoco.xml', thresholds: [[failUnhealthy: true, thresholdTarget: 'Conditional', unhealthyThreshold: 60.0], [failUnhealthy: true, thresholdTarget: 'Instruction', unhealthyThreshold: 80.0], [failUnhealthy: true, thresholdTarget: 'Method', unhealthyThreshold: 80.0], [failUnhealthy: true, thresholdTarget: 'Line', unhealthyThreshold: 80.0], [failUnhealthy: true, thresholdTarget: 'Class', unhealthyThreshold: 80.0]])], failUnhealthy: true, failUnstable: true
+        
+      }
+      }    
+      stage('tear-down')
+      {
+          sh '''
+          set +e
+          mysql --defaults-extra-file=/home/vagrant/mysql_config.txt -e 'DROP DATABASE IF EXISTS iTrust2_test'
+          if [ ! -z $(lsof -ti tcp:9001) ]; then
+            lsof -ti tcp:9001 | xargs kill -9 
+          fi
+          
+          if [ ! -z $(pgrep chrome) ]; then
+              pgrep chrome | xargs kill -9
+          fi
+          '''
+      }
+      }
+
+
+      

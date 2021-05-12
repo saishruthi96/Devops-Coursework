@@ -1,0 +1,91 @@
+---
+- name: add group "tomcat"
+  become: yes
+  group:
+    name: tomcat
+
+- name: add user "tomcat"
+  become: true
+  user:
+    name: tomcat
+    group: tomcat
+    createhome: yes
+
+- name: Download Tomcat
+  become: yes
+  get_url:
+    url: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.64/bin/apache-tomcat-8.5.64.tar.gz 
+    dest: /opt/tomcat.tar.gz
+
+- name: Extract Tomcat archive
+  become: yes
+  unarchive: 
+    src: /opt/tomcat.tar.gz
+    dest: /opt/  
+
+- name: Extract Tomcat archive
+  become: yes
+  command: chdir=/usr/share mv /opt/apache-tomcat-8.5.64 /opt/tomcat
+
+- name: Change ownership of Tomcat installation
+  become: yes
+  file:
+    path: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    state: directory   
+    recurse: yes
+
+# - name: set ansible config variables
+#   shell: |
+#         sed -i 's/.*pipelining.*/pipelining = True/' /etc/ansible/ansible.cfg
+#         sed -i 's/.*allow_world_readable_tmpfiles.*/allow_world_readable_tmpfiles = True/' /etc/ansible/ansible.cfg
+
+- name : make tomcat user owner of the directory 
+  shell: |
+        cd /opt && sudo chown -R tomcat tomcat/
+
+- name: Configure Tomcat server
+  become: yes
+  # become_user: tomcat
+  template:
+    src: /bakerx/cm/roles/tomcat/templates/server.xml
+    dest: /opt/tomcat/conf/
+
+- name: Configure Tomcat users
+  become: yes
+  # become_user: tomcat
+  template:
+    src: /bakerx/cm/roles/tomcat/templates/tomcat-users.xml
+    dest: /opt/tomcat/conf/
+
+- name: Copy Tomcat service config
+  become: yes
+  template:
+    src: /bakerx/cm/roles/tomcat/templates/tomcat.service
+    dest: /etc/systemd/system/
+
+- name: Create a directory if it does not exist
+  become: yes
+  file:
+    path: /opt/tomcat/run
+    state: directory
+    owner: tomcat
+    group: tomcat
+
+- name: Reload services
+  become: yes
+  systemd:
+    daemon_reload: yes
+
+# - name: Start the tomcat service
+#   become: yes
+#   systemd:
+#     state: restarted
+#     name: tomcat
+
+# - name: Enable the tomcat service
+#   become: yes
+#   systemd:
+#     name: tomcat
+#     enabled: yes

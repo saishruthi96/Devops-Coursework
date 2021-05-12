@@ -1,0 +1,89 @@
+---
+- name: Specify MySQL root password before installing MySQL
+  become: yes
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password
+    value: '{{ mysql_pwd }}'
+    vtype: password
+
+- name: MySQL root password confirmation
+  become: yes
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password_again
+    value: '{{ mysql_pwd }}'
+    vtype: password
+
+- name: Install MySQL server
+  become: yes
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Install MySQL client
+  become: yes
+  apt:
+    name: mysql-client
+    state: present
+
+
+# - name: Install pip, setuptools
+#   become: yes
+#   apt:
+#     name:
+#       - python3-pip    
+#       - python3-setuptools
+#     state: present
+#     update_cache: yes
+
+# - name: Install MySql and related tools
+#   become: yes
+#   apt:
+#     name: "{{ item }}"
+#     state: present
+#     update_cache: True
+#   with_items:      
+#     - mysql-server 
+#     - mysql-client
+
+# - name: Install client and libs
+#   apt:
+#     pkg: "{{ item }}"
+#     state: installed
+#   with_items:
+#     - mysql-client
+#   become: yes
+
+- name: Install PyMySQL module
+  become: yes
+  pip:
+    name: PyMySQL
+    state: present
+
+# - name: Download and install packages
+#   apt:
+#     name: [mysql-server, python-mysqldb, python-apt, python-dev, mysql-client]
+#     update_cache: yes
+#   become: yes
+
+
+# - name: start MySQL
+#   service:
+#     name: mysql
+#     state: started
+
+
+# - name: insert skip grant tables in my.cnf
+#   lineinfile:
+#     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+#     insertafter: "skip-external-locking"
+#     line: "skip-grant-tables"
+#   become: true
+
+- name: Restart the MySQL service
+  become: yes
+  service:
+    name: mysql
+    state: restarted
+    enabled: true

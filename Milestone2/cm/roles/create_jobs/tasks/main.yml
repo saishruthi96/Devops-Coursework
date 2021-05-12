@@ -1,0 +1,24 @@
+---
+- name: enabling access 
+  lineinfile:
+    path: /etc/sudoers
+    line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+  become: true
+  
+- name: Copy iTrust Config file
+  template:
+    src: "{{ project_directory }}/roles/create_jobs/templates/application.yml"
+    dest: /home/vagrant/application.yml
+
+- name: Copy checkbox job script
+  template:
+    src: "{{ project_directory }}/roles/create_jobs/templates/checkbox_jenkins_jobs.yml"
+    dest: ~/jobs/checkbox_jenkins_jobs.yml
+
+- name: Copy the YAML to setup build job
+  copy:
+    src: "{{ project_directory }}/roles/create_jobs/templates/iTrust_job.yml"
+    dest:  ~/jobs/iTrust_job.yml
+
+- name: create jobs
+  shell: 'cd  && jenkins-jobs --conf ~/jenkins_jobs.ini update ~/jobs'

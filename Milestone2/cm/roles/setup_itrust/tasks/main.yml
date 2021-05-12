@@ -1,0 +1,26 @@
+---
+- name: install maven
+  become: yes
+  apt:
+    name: maven
+    state: present
+
+- name: Download google chrome
+  get_url:
+    url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    dest: /tmp/google-chrome-stable_current_amd64.deb
+
+- name: Install google chrome
+  become: yes
+  apt:
+    deb: /tmp/google-chrome-stable_current_amd64.deb
+
+- name: Add the git credentials environment variables
+  become: yes
+  blockinfile:
+    path: /etc/environment
+    marker: '# GIT CREDENTIALS'
+    block: |
+      GIT_USERNAME={{ git_username }}
+      GIT_PASSWORD={{ git_password }}
+    state: present
