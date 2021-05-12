@@ -1,0 +1,17 @@
+---
+- hosts: jenkins
+  gather_facts: false
+  become: yes
+
+  vars:
+      jenkins_user: "{{jenkins_user}}"
+      jenkins_password : "{{jenkins_password}}"  
+      checkbox_job_name : "{{checkbox_job_name}}"
+           
+
+  roles:
+    - ping
+    - buildjobs_checkbox.io
+
+
+ 

@@ -1,0 +1,40 @@
+---
+# see the best practices in ansible docs for how to get started with creating roles etc.: 
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
+
+- hosts: jenkins 
+  gather_facts: Yes
+  become: yes 
+
+  vars:
+    git_username: "{{git_username}}"
+    git_password: "{{git_password}}"
+
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+    
+  tasks:
+  - name: Add the git credentials environment variables
+    become: yes
+    blockinfile:
+      path: /etc/environment
+      marker: '# GIT CREDENTIALS'
+      block: |
+        GIT_USERNAME={{ git_username }}
+        GIT_PASSWORD={{ git_password }}
+      state: present
+
+  roles:
+    - ping   
+    - checkbox.io
+    - pm2_setup
+    - java  
+    - mysql 
+    - static_analysis 
+    - setup_itrust    
+    - jenkins   
+    - create_jobs     
+    - setup_fuzzing
+    
+    
+  

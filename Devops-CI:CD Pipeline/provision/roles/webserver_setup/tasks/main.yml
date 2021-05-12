@@ -1,0 +1,37 @@
+---
+- name: Run whoami without become.
+  command: whoami
+  changed_when: false
+  become: false
+  register: whoami
+
+- name: Copy the server file 
+  copy:
+    src: /bakerx/servers.json
+    dest:  /home/{{ whoami.stdout }}
+    
+- name: Copy the redis file 
+  copy:
+    src: /bakerx/cm/redis.sh
+    dest:  /home/{{ whoami.stdout }}
+
+- name: configure redis
+  become: yes
+  shell : chmod 700 /home/{{ whoami.stdout }}/redis.sh && ./redis.sh  
+
+- name: Copy folder
+  copy:
+    src: /bakerx/provision/roles/webserver_setup/templates/agent
+    dest: /home/{{ whoami.stdout}}
+
+- name: Install npm packages
+  shell: "cd /home/{{ whoami.stdout}}/agent && sudo npm install"
+
+- name: Install forever
+  npm:
+    name: forever
+    global: true
+    state: latest
+
+- name: run agent/index.js forever
+  shell: "cd /home/{{ whoami.stdout }}/agent && forever stopall &&  forever start index.js {{ vmname }}"

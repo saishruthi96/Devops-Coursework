@@ -1,0 +1,12 @@
+---
+- name: Run apt update
+  become: yes
+  apt:
+    upgrade: 'yes'
+    update_cache: yes
+    
+- name: Install headless java
+  apt:
+    name: openjdk-11-jdk-headless
+    state: latest
+    install_recommends: no

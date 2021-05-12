@@ -1,0 +1,18 @@
+- name: Copy the static analysis folder to jenkins-srv
+  copy:
+    src: /bakerx/static_analysis
+    dest: /home/vagrant/
+
+- name: Go to the static analysis foler 
+  shell: cd /home/vagrant/static_analysis
+
+- name: Install required node packages
+  shell: npm install
+
+- name: Go back to home/vagrant 
+  shell: cd /home/vagrant
+
+
+
+
+

@@ -1,0 +1,15 @@
+- name: Install forever
+  npm:
+    name: forever
+    global: true
+    state: latest
+  become: yes
+
+- name: Copy the redis file to vm
+  copy:
+    src: /bakerx/cm/redis.sh
+    dest:  /home/vagrant
+
+- name: configure redis
+  become: yes
+  shell : chmod 700 /home/vagrant/redis.sh && /home/vagrant/redis.sh

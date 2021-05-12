@@ -1,0 +1,29 @@
+TASK 3 
+----
+Before 
+----
+real    0m34.070s
+user    0m2.415s
+sys     0m1.222s
+
+After
+-------
+real    0m10.641s
+user    0m2.361s
+sys     0m1.331s
+
+TASK 4 
+----
+Before 
+----
+real    0m40.198s
+user    0m4.928s
+sys     0m2.474s
+
+
+After
+-----
+
+real    0m17.086s
+user    0m4.928s
+sys     0m2.805s

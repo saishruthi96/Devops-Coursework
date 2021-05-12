@@ -1,0 +1,35 @@
+- job:
+    name: "{{checkbox_job_name}}"
+    project-type: pipeline
+    dsl: |
+      node {
+        stage('Source'){
+          git 'https://github.com/chrisparnin/checkbox.io'
+        }
+        stage('Build'){
+          echo 'Installing node modules'
+          sh '''
+          cd server-side/site
+          npm install'''         
+                        
+          echo 'Starting node server'
+          sh '''
+          cd server-side/site
+          pm2 start server.js'''
+        }
+        stage('Static Analysis'){
+          sh '''
+          node /home/vagrant/static_analysis/analysis.js server-side/site
+          '''
+        }
+        stage('Test'){
+          sh '''
+          cd server-side/site
+          npm test'''
+        }
+        stage('Tear-down'){
+          sh '''
+          cd server-side/site
+          pm2 stop server.js'''          
+        }
+      }

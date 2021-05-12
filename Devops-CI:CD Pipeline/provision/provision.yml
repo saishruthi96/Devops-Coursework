@@ -1,0 +1,10 @@
+- hosts: jenkins 
+  gather_facts: Yes
+  become: yes 
+
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+
+  roles:   
+    - ping
+    - provision_setup

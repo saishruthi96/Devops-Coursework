@@ -1,0 +1,7 @@
+- name: Run nodejs
+  include_role:
+    name: nodejs
+    
+- name: Run mongoDb
+  include_role:
+    name: mongoDb

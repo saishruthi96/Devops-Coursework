@@ -1,0 +1,29 @@
+- hosts: proxy
+  gather_facts: false
+  become: yes
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+    
+  roles:
+    - /bakerx/provision/roles/wait_connection
+    - /bakerx/cm/roles/nodejs
+    - /bakerx/cm/roles/pm2_setup   
+    - redisnforever
+    - proxy
+
+  vars:
+    ansible_python_interpreter: python3
+
+- hosts: blue,green 
+  gather_facts: false
+  become: yes
+  vars:    
+    ansible_python_interpreter: python3
+  vars_files:
+    - /bakerx/cm/vars/vars.yml  
+  roles:
+    - /bakerx/provision/roles/wait_connection
+    - /bakerx/cm/roles/nodejs
+    - redisnforever
+    - bluegreen_setup
+

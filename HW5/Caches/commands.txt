@@ -1,0 +1,14 @@
+git clone https://github.com/CSC-DevOps/meow.io
+
+cd meow.io
+npm install 
+node data/init.js
+
+# Start server
+npm start
+curl -F "image=@./meow.io/data/morning.jpg" http://localhost:3000/upload
+curl -F "image=@./meow.io/data/i-scream.jpg" http://localhost:3000/upload
+curl -F "image=@./meow.io/data/hairypotter.jpg" http://localhost:3000/upload
+
+time ./load-index.sh
+time ./load-and-vote-upload.sh

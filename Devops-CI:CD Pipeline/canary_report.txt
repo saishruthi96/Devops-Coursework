@@ -1,0 +1,9 @@
+-------------------- CANARY ANALYSIS REPORT -------------------
+
+	 CPU Status 		 : PASS
+	 Memory Status 		 : FAIL
+	 Latency Status 	 : PASS
+	 Http Status 		 : PASS
+---------------------------------------------------------------
+	SCORE :3/4
+	CANARY ANALYSIS 	: PASSED !!!

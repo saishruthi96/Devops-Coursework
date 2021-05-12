@@ -1,0 +1,77 @@
+---
+# Role that sets up and configures mongodb
+# We choose to install from site repository (mongodb-org) instead of Ubuntu repository
+# That way we get the latest version of mongodb
+# https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+
+- name: Install gnupg
+  become: yes
+  apt:
+    name: gnupg
+    state: present
+
+- name: Add mongodb apt key
+  apt_key: 
+    url: https://www.mongodb.org/static/pgp/server-4.4.asc
+    state: present
+
+- name: Creating sources list file
+  copy:
+    dest: /etc/apt/sources.list.d/mongodb-org-4.4.list
+    content: |
+      deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse
+
+- name: Install mongodb
+  apt: 
+    pkg: mongodb-org
+    update_cache: yes
+
+- name: Install pip, setuptools
+  become: yes
+  apt:
+    name:
+      - python3-pip  
+      - python-setuptools
+    state: present
+    update_cache: yes
+
+- name: Install pymongo
+  become: yes
+  pip:
+    name: pymongo
+    state: present
+
+- name: Start the mongodb service
+  become: yes
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: mongod
+
+- name: Enable the mongodb service
+  become: yes
+  systemd:
+    name: mongod
+    enabled: yes
+
+- name: Create mongo user
+  no_log: true
+  mongodb_user:
+    database: "{{ mongo_db }}"
+    name: "{{ mongo_user }}"
+    password: "{{ mongo_pwd }}"
+    state: present
+    roles: readWrite
+
+- name: Add the environment variables
+  become: yes
+  blockinfile:
+    path: /etc/environment
+    marker: "# MONGO ENVIRONMENT VARIABLES"
+    block: |
+      APP_PORT={{ app_port }}
+      MONGO_PORT={{ mongo_port }}
+      MONGO_USER={{ mongo_user }}
+      MONGO_PASSWORD={{ mongo_pwd }}
+      MONGO_IP={{ mongo_ip }}
+    state: present

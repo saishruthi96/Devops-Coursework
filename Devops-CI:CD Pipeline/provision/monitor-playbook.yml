@@ -1,0 +1,44 @@
+---
+- hosts: monitor
+  gather_facts: true
+  become: yes
+  vars:    
+    ansible_python_interpreter: python3
+
+  vars_files:
+    - /bakerx/cm/vars/vars.yml  
+
+  roles:
+    - wait_connection
+    - ping
+    - /bakerx/cm/roles/nodejs
+    - monitor_setup
+
+- hosts: checkbox
+  gather_facts: true
+  become: yes
+  vars:
+    vmname: checkbox   
+    ansible_python_interpreter: python3
+
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+  
+  roles:
+    - wait_connection
+    - /bakerx/cm/roles/nodejs
+    - webserver_setup
+  
+- hosts: itrust
+  gather_facts: true
+  become: yes
+  vars:
+    vmname: itrust
+    ansible_python_interpreter: python3 
+
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+  roles:
+    - wait_connection
+    - /bakerx/cm/roles/nodejs
+    - webserver_setup

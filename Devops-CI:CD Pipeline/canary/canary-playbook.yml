@@ -1,0 +1,51 @@
+---
+- hosts: blue
+  gather_facts: false
+  become: yes
+  vars:
+    branch: "{{ blue }}"
+    vmname: blue
+    ansible_python_interpreter: python3
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+  tasks:
+    - name: Run Blue 
+      become: yes 
+      shell: |
+        cd /home/vagrant/agent    
+        forever stopall
+        forever start index.js {{vmname}}
+        cd /home/vagrant/checkbox
+        git checkout {{branch}}
+        forever start index.js
+     
+- hosts: green
+  gather_facts: false
+  become: yes
+  vars:
+    branch: "{{ green }}"
+    vmname: green
+    ansible_python_interpreter: python3
+  vars_files:
+    - /bakerx/cm/vars/vars.yml
+  tasks:
+    - name: Run Green
+      become: yes 
+      shell: |
+        cd /home/vagrant/agent    
+        forever stopall
+        forever start index.js {{vmname}}
+        cd /home/vagrant/checkbox
+        git checkout {{branch}}
+        forever start index.js
+ 
+- hosts: proxy
+  gather_facts: false
+  become: yes
+  vars_files:
+    - /bakerx/cm/vars/vars.yml  
+  vars:
+    ansible_python_interpreter: python3
+  tasks:
+    - name: Run proxy
+      shell: "cd /home/vagrant/dashboard && pm2 kill && pm2 start bin/www -- local 192.168.33.30 192.168.33.40"
