@@ -14,6 +14,11 @@ DevOps project Spring 2021 NC State University
 
 -------------------
 
+### Milestones and Requirements:
+* Build Milestone requirements [here](https://github.com/saishruthi96/Devops-Course/blob/master/Project/Pipeline1.md)
+* Test Milestone requirements [here](https://github.com/saishruthi96/Devops-Course/blob/master/Project/Pipeline2.md)
+* Deploy Milestone requirements [here](https://github.com/saishruthi96/Devops-Course/blob/master/Project/Pipeline3.md)
+
 ### Links to Important Resources
 * Final Project Demo [here](https://drive.google.com/file/d/1NrLHVl6iqNc5xsSd1cOVtjy0M4U6m2cb/view?usp=sharing)
 * Link to Milestone 1 checkpoint report can be found [here](https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-22/blob/master/Milestone1_checkpoint.md)
